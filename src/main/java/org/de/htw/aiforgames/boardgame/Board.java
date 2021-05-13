@@ -81,4 +81,13 @@ public class Board {
         if (bottomNeighbour.getX() > MAX_X || bottomNeighbour.getY() > MAX_Y) return null;
         return bottomNeighbour;
     }
+
+    /**
+     * Returns all neighbours of the triangle located at the given index
+     * @param index the triangle whose neighbours are returned
+     * @return an array of the three neighbours in the form (left, right, bottom)
+     */
+    public Triangle[] getNeighbours(int index) {
+        return new Triangle[]{getLeftNeighbour(index), getRightNeighbour(index), getBottomNeighbour(index)};
+    }
 }
