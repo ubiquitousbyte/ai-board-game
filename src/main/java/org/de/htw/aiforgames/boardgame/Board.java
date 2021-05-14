@@ -1,5 +1,9 @@
 package org.de.htw.aiforgames.boardgame;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * The playing board represented as a collection of 34 triangles
  */
@@ -19,7 +23,7 @@ public class Board {
         board = new Triangle[SIZE+1];
         int boardIndex = 0;
         for(int offset = 3, startY = 1; offset <= 11; offset +=2, startY++) {
-            Triangle t = new Triangle(0, startY, Triangle.Color.BLUE);
+            Triangle t = new Triangle(boardIndex+1,0, startY, Triangle.Color.BLUE);
             board[boardIndex] = t;
             boardIndex++;
             for(Triangle right = t.computeRight(); right.getX() < offset; right = right.computeRight()) {
@@ -36,10 +40,7 @@ public class Board {
      * @param index the index
      * @return the triangle at the given index.
      */
-    public Triangle getTriangle(int index) {
-        if (index < 1 || index > SIZE) return null;
-        return board[index-1];
-    }
+    public Triangle getTriangle(int index) { return (index < 1 || index > SIZE) ? null : board[index-1]; }
 
     /**
      * Returns the left neighbour of the triangle located at the given index position
@@ -75,11 +76,18 @@ public class Board {
     public Triangle getBottomNeighbour(int index) {
         Triangle current = getTriangle(index);
         if (current == null) return null;
-        // Don't search for the neighbour inside the board, as this operation has a O(n) time complexity. Instead, just compute it.
         Triangle bottomNeighbour = current.computeBottom();
         if (bottomNeighbour.getX() < MIN_X || bottomNeighbour.getY() < MIN_Y) return null;
         if (bottomNeighbour.getX() > MAX_X || bottomNeighbour.getY() > MAX_Y) return null;
-        return bottomNeighbour;
+        // This unfortunately takes O(n) time :/ I need it to obtain the correct index of the triangle
+        for (Triangle t : board) {
+            if (t.getX() == bottomNeighbour.getX() &&
+                t.getY() == bottomNeighbour.getY() &&
+                t.getColor() == bottomNeighbour.getColor()) {
+                return t;
+            }
+        }
+        return null;
     }
 
     /**
@@ -89,5 +97,37 @@ public class Board {
      */
     public Triangle[] getNeighbours(int index) {
         return new Triangle[]{getLeftNeighbour(index), getRightNeighbour(index), getBottomNeighbour(index)};
+    }
+
+    /**
+     * Renders the triangle at the given location unreachable
+     * @param index the index of the triangle
+     */
+    public void mask(int index) {
+        Triangle triangle = getTriangle(index);
+        if (triangle != null) {
+            triangle.mask();
+        }
+    }
+
+    /**
+     * Renders the triangle at the given location reachable
+     * @param index the index of the triangle
+     */
+    public void unmask(int index) {
+        Triangle triangle = getTriangle(index);
+        if (triangle != null) {
+            triangle.unmask();
+        }
+    }
+
+    public List<Integer> getUnmaskedPositions() {
+        List<Integer> unmasked = new ArrayList<>();
+        for(int i = 0; i < board.length; i++) {
+            if (board[i] != null && ! board[i].masked()) {
+                unmasked.add(i);
+            }
+        }
+        return unmasked;
     }
 }

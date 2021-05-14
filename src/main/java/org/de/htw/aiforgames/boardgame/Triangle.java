@@ -8,24 +8,46 @@ import java.util.Objects;
  */
 public class Triangle {
 
+    private final int id;
     // The x coordinate of the triangle
     private final int x;
     // The y coordinate of the triangle
     private final int y;
     // The triangle's color
     private final Color color;
+    // Whether the triangle is marked as unreachable or not
+    private boolean isMasked;
 
     // The possible color values, either gold or blue
-    public enum Color {
-        GOLD,
-        BLUE
-    }
+    public enum Color { GOLD, BLUE }
 
-    public Triangle(int x, int y, Color color) {
+    public Triangle(int id, int x, int y, Color color) {
+        this.id = id;
         this.x = x;
         this.y = y;
         this.color = color;
+        this.isMasked = false;
     }
+
+    /**
+     * @return true if the triangle is masked, false otherwise
+     */
+    public boolean masked() { return this.isMasked; }
+
+    /**
+     * Renders the triangle unreachable
+     */
+    public void mask() { this.isMasked = true; }
+
+    /**
+     * Renders the triangle reachable
+     */
+    public void unmask() { this.isMasked = false; }
+
+    /**
+     * @return the unique identifier of the triangle
+     */
+    public int getId() { return id; }
 
     /**
      * @return the x coordinate of the triangle
@@ -52,18 +74,14 @@ public class Triangle {
      *
      * @return the left neighbour
      */
-    public Triangle computeLeft() {
-        return new Triangle(x-1, y, getOppositeColor());
-    }
+    public Triangle computeLeft() { return new Triangle(id-1,x-1, y, getOppositeColor()); }
 
     /**
      * Computes the right neighbour of this triangle
      *
      * @return the right neighbour
      */
-    public Triangle computeRight() {
-        return new Triangle(x+1, y, getOppositeColor());
-    }
+    public Triangle computeRight() { return new Triangle(id+1, x+1, y, getOppositeColor()); }
 
     /**
      * The bottom neighbour of this triangle
@@ -71,10 +89,8 @@ public class Triangle {
      * @return the bottom neighbour
      */
     public Triangle computeBottom() {
-        if (this.color == Color.GOLD) {
-            return new Triangle(x-1, y-1, Color.BLUE);
-        }
-        return new Triangle(x+1, y+1, Color.GOLD);
+        // TODO: Find a way to compute the index of the triangle from the coordinate??
+        return (this.color == Color.GOLD) ? new Triangle(-1,x-1, y-1, Color.BLUE) : new Triangle(-1,x+1, y+1, Color.GOLD);
     }
 
     @Override
@@ -82,16 +98,17 @@ public class Triangle {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Triangle triangle = (Triangle) o;
-        return x == triangle.x && y == triangle.y && color == triangle.color;
+        return id == triangle.id && x == triangle.x && y == triangle.y && color == triangle.color;
     }
 
     @Override
-    public int hashCode() { return Objects.hash(x, y, color); }
+    public int hashCode() { return Objects.hash(id, x, y, color); }
 
     @Override
     public String toString() {
         return "Triangle{" +
-                "x=" + x +
+                "id=" + id +
+                ", x=" + x +
                 ", y=" + y +
                 ", color=" + color +
                 '}';
