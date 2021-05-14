@@ -121,6 +121,9 @@ public class Board {
         }
     }
 
+    /**
+     * @return a list of indices representing the free positions on the grid
+     */
     public List<Integer> getUnmaskedPositions() {
         List<Integer> unmasked = new ArrayList<>();
         for(int i = 0; i < board.length; i++) {

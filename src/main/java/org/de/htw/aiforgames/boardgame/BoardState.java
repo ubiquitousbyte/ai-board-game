@@ -1,13 +1,14 @@
 package org.de.htw.aiforgames.boardgame;
 
-import lenz.htw.blocks.Move;
-
 import java.util.List;
 
 public class BoardState {
 
+    // The current player
     private final int player;
+    // A 3x2 array holding the indices of the player's tokens
     private final int[][] positions;
+    // The game board
     private final Board board;
 
     public BoardState(int player, int[][] positions) {
@@ -16,42 +17,44 @@ public class BoardState {
         this.positions = positions;
     }
 
+    /**
+     * @return the current player
+     */
     public int getPlayer() { return player; }
 
+    /**
+     * @param player the player id
+     * @return the position of the player's left token
+     */
     public int getLeftTokenIndex(int player) { return positions[player][0]; }
 
+    /**
+     * @param player the player id
+     * @return the position of the player's right token
+     */
     public int getRightTokenIndex(int player) { return positions[player][1]; }
 
-    public void setLeftTokenIndex(int player, int index) {
-        positions[player][0] = index;
-    }
-
-    public void setRightTokenIndex(int player, int index) { positions[player][1] = index; }
-
+    /**
+     * @param player the player id
+     * @return the triangles that are nearest to the player's left token
+     */
     public Triangle[] getLeftTokenNeighbours(int player) {
         int index = getLeftTokenIndex(player);
         return board.getNeighbours(index);
     }
 
+    /**
+     * @param player the player id
+     * @return the triangles that are nearest to the player's right token
+     */
     public Triangle[] getRightTokenNeighbours(int player) {
         int index = getRightTokenIndex(player);
         return board.getNeighbours(index);
     }
 
-    public Triangle[] getNeighbours(int player) {
-        Triangle[] result = new Triangle[6];
-        Triangle[] leftNeighbours = getLeftTokenNeighbours(player);
-        Triangle[] rightNeighbours = getRightTokenNeighbours(player);
-        System.arraycopy(leftNeighbours, 0, result, 0, leftNeighbours.length);
-        System.arraycopy(rightNeighbours, 0, result, 3, rightNeighbours.length);
-        return result;
-    }
-
+    /**
+     * @return the indices of the free positions on the board
+     */
     public List<Integer> getUnmaskedPositions() { return board.getUnmaskedPositions(); }
 
-    public void mask(Move m) {
-        board.mask(m.delete);
-        board.mask(m.first);
-        board.mask(m.second);
-    }
 }
