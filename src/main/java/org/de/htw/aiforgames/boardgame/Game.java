@@ -47,10 +47,9 @@ public interface Game<S, A> {
     S transition(S state, A action);
 
     /**
-     * The utility of the player in the given terminal state
+     * Compute the utility of the state from each player's viewpoint
      * @param state the terminal state
-     * @param player the player
-     * @return a numeric value representing the player's utility at the given terminal state
+     * @return an array of numeric values representing the utility of the state from the player's viewpoint
      */
-    int utility(S state, int player);
+    int[] utility(S state);
 }

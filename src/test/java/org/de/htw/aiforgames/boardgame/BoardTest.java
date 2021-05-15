@@ -1,6 +1,5 @@
 package org.de.htw.aiforgames.boardgame;
 
-
 import org.junit.Test;
 
 import static org.junit.Assert.*;

@@ -22,6 +22,7 @@ public class App {
             ThreadedNetworkClient client = new ThreadedNetworkClient(serverAddress, teamName, icon);
             Thread t = new Thread(client);
             t.start();
+
         }
     }
 }

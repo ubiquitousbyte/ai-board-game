@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * The playing board represented as a collection of 34 triangles
  */
-public class Board {
+public class Board  implements Cloneable {
 
     // The total number of elements in the grid
     private static final int SIZE = 34;
@@ -17,7 +17,7 @@ public class Board {
     private static final int MIN_Y = 1;
 
     // A 1-d representation of the board
-    private final Triangle[] board;
+    private Triangle[] board;
 
     public Board() {
         board = new Triangle[SIZE+1];
@@ -81,7 +81,8 @@ public class Board {
         if (bottomNeighbour.getX() > MAX_X || bottomNeighbour.getY() > MAX_Y) return null;
         // This unfortunately takes O(n) time :/ I need it to obtain the correct index of the triangle
         for (Triangle t : board) {
-            if (t.getX() == bottomNeighbour.getX() &&
+            if (t != null &&
+                t.getX() == bottomNeighbour.getX() &&
                 t.getY() == bottomNeighbour.getY() &&
                 t.getColor() == bottomNeighbour.getColor()) {
                 return t;
@@ -128,9 +129,16 @@ public class Board {
         List<Integer> unmasked = new ArrayList<>();
         for(int i = 0; i < board.length; i++) {
             if (board[i] != null && ! board[i].masked()) {
-                unmasked.add(i);
+                unmasked.add(i+1);
             }
         }
         return unmasked;
+    }
+
+    @Override
+    public Board clone() throws CloneNotSupportedException {
+        Board newBoard = (Board) super.clone();
+        newBoard.board = board.clone();
+        return newBoard;
     }
 }

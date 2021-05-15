@@ -8,6 +8,7 @@ import java.util.Objects;
  */
 public class Triangle {
 
+    // The id of the triangle in the grid.
     private final int id;
     // The x coordinate of the triangle
     private final int x;
@@ -111,6 +112,7 @@ public class Triangle {
                 ", x=" + x +
                 ", y=" + y +
                 ", color=" + color +
+                ", masked=" + isMasked +
                 '}';
     }
 }

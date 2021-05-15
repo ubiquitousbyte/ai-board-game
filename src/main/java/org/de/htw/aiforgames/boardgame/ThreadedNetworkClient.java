@@ -29,18 +29,10 @@ public class ThreadedNetworkClient implements Runnable {
 
     public void connect() { client = new NetworkClient(this.serverAddress, this.teamName, this.icon); }
 
-    private void play() {
-        while (true) {
-            Move recv;
-            while ((recv = this.client.receiveMove()) != null) {
-                logger.log(Level.INFO, "Received move " + recv.toString());
-            }
-            Move send = new Move(this.client.getMyPlayerNumber(), 2, 3, 4);
-        }
-    }
-
     @Override
     public void run() {
+        Game<BoardState, Move> game = new BoardGame();
+        GamePolicy<BoardState, Move> gamePolicy = new MinimaxPolicy();
         try {
             this.connect();
         }
@@ -48,6 +40,16 @@ public class ThreadedNetworkClient implements Runnable {
             logger.log(Level.WARNING, e.getMessage());
             return;
         }
-        this.play();
+        BoardState currentState = game.startState();
+        Move move;
+        while(! game.isTerminal(currentState)) {
+            while((move = client.receiveMove()) != null) {
+                currentState = game.transition(currentState, move);
+            }
+            GamePolicy.Decision<Move> decision = gamePolicy.apply(game, currentState);
+            logger.log(Level.INFO, decision.toString());
+            move = decision.action;
+            client.sendMove(move);
+        }
     }
 }

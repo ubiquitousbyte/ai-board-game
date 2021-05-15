@@ -17,7 +17,9 @@ public class BoardGame implements Game<BoardState, Move> {
                 {4, 9},
                 {29, 31}
         };
-        return new BoardState(currentPlayer, positions);
+        BoardState state = new BoardState(currentPlayer, positions);
+        state.maskPositions();
+        return state;
     }
 
     @Override
@@ -57,17 +59,47 @@ public class BoardGame implements Game<BoardState, Move> {
 
     @Override
     public boolean isTerminal(BoardState state) {
-        return state.getUnmaskedPositions().isEmpty();
+        int player = getPlayer(state);
+        for (Triangle t : state.getLeftTokenNeighbours(player)) {
+            if (t != null) {
+                if (! t.masked()) {
+                    return false;
+                }
+            }
+        }
+        for(Triangle t : state.getRightTokenNeighbours(player)) {
+            if (t != null) {
+                if (! t.masked()) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     @Override
     public BoardState transition(BoardState state, Move action) {
-
-        return null;
+        int player = getPlayer(state);
+        state.movePlayer(player, action);
+        int nextPlayer = getNextPlayer(state);
+        BoardState newState = state.clone();
+        newState.setPlayer(nextPlayer);
+        return newState;
     }
 
     @Override
-    public int utility(BoardState state, int player) {
+    public int[] utility(BoardState state) {
+        int[] result = new int[3];
+        for(int i = 0; i < result.length; i++) {
+            result[i] = state.getPlayerPoints(i)[i];
+        }
+        return result;
+    }
+
+    private int getNextPlayer(BoardState state) {
+        int player = getPlayer(state);
+        if (player == 0) return 1;
+        if (player == 1) return 2;
         return 0;
     }
 }
