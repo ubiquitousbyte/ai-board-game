@@ -7,8 +7,6 @@ import java.util.List;
 
 public class BoardGame implements Game<BoardState, Move> {
 
-    private final boolean[] losers = new boolean[]{false, false, false};
-
     @Override
     public BoardState startState() {
         // The initial player is the red player

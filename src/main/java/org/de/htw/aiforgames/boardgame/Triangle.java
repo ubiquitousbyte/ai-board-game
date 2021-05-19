@@ -107,11 +107,11 @@ public class Triangle {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Triangle triangle = (Triangle) o;
-        return id == triangle.id && x == triangle.x && y == triangle.y && color == triangle.color;
+        return id == triangle.id && x == triangle.x && y == triangle.y && color == triangle.color && isMasked == triangle.isMasked;
     }
 
     @Override
-    public int hashCode() { return Objects.hash(id, x, y, color); }
+    public int hashCode() { return Objects.hash(id, x, y, color, isMasked); }
 
     @Override
     public String toString() {

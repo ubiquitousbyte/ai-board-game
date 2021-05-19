@@ -38,4 +38,5 @@ public class MinimaxPolicy implements GamePolicy<BoardState, Move> {
             return min;
         }
     }
+
 }

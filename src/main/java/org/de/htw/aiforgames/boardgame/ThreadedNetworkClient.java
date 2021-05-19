@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
-
 /**
  * This is just a simple convenience wrapper around the network client.
  * The client can run in a dedicated thread and therefore not block the main thread.
@@ -60,5 +59,7 @@ public class ThreadedNetworkClient implements Runnable {
                 client.sendMove(decision.action);
             }
         }
+        Move testament = new Move(currentState.getPlayer(), -1, -1, -1);
+        client.sendMove(testament);
     }
 }
