@@ -30,7 +30,6 @@ public class ThreadedNetworkClient implements Runnable {
 
     public void connect() { client = new NetworkClient(this.serverAddress, this.teamName, this.icon); }
 
-
     @Override
     public void run() {
         Game<BoardState, Move> game = new BoardGame();
@@ -44,13 +43,12 @@ public class ThreadedNetworkClient implements Runnable {
         }
         BoardState currentState = game.startState();
         Move recv;
-        while (true) {
+        while (! game.isTerminal(currentState)) {
             while ((recv = client.receiveMove()) != null) {
-                logger.log(Level.INFO, client.getMyPlayerNumber() + " received " + recv);
                 currentState = game.transition(currentState, recv);
             }
             currentState.setPlayer(client.getMyPlayerNumber());
-            GamePolicy.Decision<Move> decision = gamePolicy.apply(game, currentState, 3);
+            GamePolicy.Decision<Move> decision = gamePolicy.apply(game, currentState, 4);
             if (decision.action == null) {
                 client.sendMove(new Move(currentState.getPlayer(), -1, -1, -1));
                 break;
@@ -59,7 +57,5 @@ public class ThreadedNetworkClient implements Runnable {
                 client.sendMove(decision.action);
             }
         }
-        Move testament = new Move(currentState.getPlayer(), -1, -1, -1);
-        client.sendMove(testament);
     }
 }
