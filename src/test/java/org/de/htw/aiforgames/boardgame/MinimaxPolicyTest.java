@@ -14,10 +14,15 @@ public class MinimaxPolicyTest {
         BoardGame game = new BoardGame();
         MinimaxPolicy policy = new MinimaxPolicy();
         BoardState currentState = game.startState();
-        GamePolicy.Decision<Move> move = policy.apply(game, currentState);
-        currentState = game.transition(currentState, move.action);
-        move = policy.apply(game, currentState);
-        currentState = game.transition(currentState, move.action);
-
+        while (true) {
+            System.out.println(currentState.getUnmaskedPositions());
+            GamePolicy.Decision<Move> move = policy.apply(game, currentState, 3);
+            System.out.println(move);
+            currentState = game.transition(currentState, move.action);
+            if (game.isTerminal(currentState)) {
+                int nextPlayer = game.getNextPlayer(currentState);
+                currentState.setPlayer(nextPlayer);
+            }
+        }
     }
 }

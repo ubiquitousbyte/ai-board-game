@@ -22,5 +22,5 @@ public interface GamePolicy<S, A> {
         }
     }
 
-    Decision<A> apply(Game<S, A> game, S state);
+    Decision<A> apply(Game<S, A> game, S state, int depth);
 }

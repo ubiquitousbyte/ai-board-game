@@ -30,6 +30,14 @@ public class Triangle {
         this.isMasked = false;
     }
 
+    public Triangle(Triangle t) {
+        this.id = t.id;
+        this.x = t.x;
+        this.y = t.y;
+        this.color = t.color;
+        this.isMasked = t.isMasked;
+    }
+
     /**
      * @return true if the triangle is masked, false otherwise
      */
@@ -99,11 +107,11 @@ public class Triangle {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Triangle triangle = (Triangle) o;
-        return id == triangle.id && x == triangle.x && y == triangle.y && color == triangle.color;
+        return id == triangle.id && x == triangle.x && y == triangle.y && color == triangle.color && isMasked == triangle.isMasked;
     }
 
     @Override
-    public int hashCode() { return Objects.hash(id, x, y, color); }
+    public int hashCode() { return Objects.hash(id, x, y, color, isMasked); }
 
     @Override
     public String toString() {

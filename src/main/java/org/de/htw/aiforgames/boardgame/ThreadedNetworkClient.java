@@ -4,8 +4,11 @@ import lenz.htw.blocks.Move;
 import lenz.htw.blocks.net.NetworkClient;
 
 import java.awt.image.BufferedImage;
+
 import java.util.logging.Logger;
 import java.util.logging.Level;
+
+import static java.lang.Thread.sleep;
 
 /**
  * This is just a simple convenience wrapper around the network client.
@@ -41,15 +44,29 @@ public class ThreadedNetworkClient implements Runnable {
             return;
         }
         BoardState currentState = game.startState();
-        Move move;
-        while(! game.isTerminal(currentState)) {
-            while((move = client.receiveMove()) != null) {
-                currentState = game.transition(currentState, move);
+        Move recv;
+        while (! game.isTerminal(currentState)) {
+            while ((recv = client.receiveMove()) != null) {
+                currentState = game.transition(currentState, recv);
             }
-            GamePolicy.Decision<Move> decision = gamePolicy.apply(game, currentState);
-            logger.log(Level.INFO, decision.toString());
-            move = decision.action;
-            client.sendMove(move);
+            GamePolicy.Decision<Move> decision = gamePolicy.apply(game, currentState, 3);
+            Move move = decision.action;
+            if (move == null) {
+                int statePlayer = currentState.getPlayer();
+                int threadPlayer = client.getMyPlayerNumber();
+                if (threadPlayer == statePlayer) {
+                    break;
+                }
+                else {
+                    int nextPlayer = game.getNextPlayer(currentState);
+                    currentState.setPlayer(nextPlayer);
+                }
+            }
+            else {
+                client.sendMove(move);
+            }
         }
+        Move testament = new Move(currentState.getPlayer(), -1, -1, -1);
+        client.sendMove(testament);
     }
 }

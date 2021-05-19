@@ -52,4 +52,6 @@ public interface Game<S, A> {
      * @return an array of numeric values representing the utility of the state from the player's viewpoint
      */
     int[] utility(S state);
+
+    int getNextPlayer(BoardState state);
 }

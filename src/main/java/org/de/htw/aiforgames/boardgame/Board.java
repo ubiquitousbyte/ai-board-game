@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * The playing board represented as a collection of 34 triangles
  */
-public class Board  implements Cloneable {
+public class Board {
 
     // The total number of elements in the grid
     private static final int SIZE = 34;
@@ -17,7 +17,7 @@ public class Board  implements Cloneable {
     private static final int MIN_Y = 1;
 
     // A 1-d representation of the board
-    private Triangle[] board;
+    private final Triangle[] board;
 
     public Board() {
         board = new Triangle[SIZE+1];
@@ -34,6 +34,15 @@ public class Board  implements Cloneable {
         // These two indices are not part of the grid
         board[24] = null;
         board[34] = null;
+    }
+
+    public Board(Board b) {
+        board = new Triangle[SIZE+1];
+        for(int i = 0; i < board.length; i++) {
+            if (b.board[i] != null) {
+                board[i] = new Triangle(b.board[i]);
+            }
+        }
     }
 
     /**
@@ -133,12 +142,5 @@ public class Board  implements Cloneable {
             }
         }
         return unmasked;
-    }
-
-    @Override
-    public Board clone() throws CloneNotSupportedException {
-        Board newBoard = (Board) super.clone();
-        newBoard.board = board.clone();
-        return newBoard;
     }
 }
