@@ -4,8 +4,10 @@ import lenz.htw.blocks.Move;
 import lenz.htw.blocks.net.NetworkClient;
 
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.logging.Logger;
 import java.util.logging.Level;
+
 
 /**
  * This is just a simple convenience wrapper around the network client.
@@ -29,27 +31,34 @@ public class ThreadedNetworkClient implements Runnable {
 
     public void connect() { client = new NetworkClient(this.serverAddress, this.teamName, this.icon); }
 
+
     @Override
     public void run() {
         Game<BoardState, Move> game = new BoardGame();
-        GamePolicy<BoardState, Move> gamePolicy = new MinimaxPolicy();
+        GamePolicy<BoardState, Move> gamePolicy = new AlphaBetaPolicy();
         try {
-            this.connect();
+            connect();
         }
         catch (Exception e) {
             logger.log(Level.WARNING, e.getMessage());
             return;
         }
         BoardState currentState = game.startState();
-        Move move;
-        while(! game.isTerminal(currentState)) {
-            while((move = client.receiveMove()) != null) {
-                currentState = game.transition(currentState, move);
+        Move recv;
+        while (true) {
+            while ((recv = client.receiveMove()) != null) {
+                logger.log(Level.INFO, client.getMyPlayerNumber() + " received " + recv);
+                currentState = game.transition(currentState, recv);
             }
-            GamePolicy.Decision<Move> decision = gamePolicy.apply(game, currentState);
-            logger.log(Level.INFO, decision.toString());
-            move = decision.action;
-            client.sendMove(move);
+            currentState.setPlayer(client.getMyPlayerNumber());
+            GamePolicy.Decision<Move> decision = gamePolicy.apply(game, currentState, 3);
+            if (decision.action == null) {
+                client.sendMove(new Move(currentState.getPlayer(), -1, -1, -1));
+                break;
+            }
+            else {
+                client.sendMove(decision.action);
+            }
         }
     }
 }

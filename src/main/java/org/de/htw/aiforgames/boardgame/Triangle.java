@@ -30,6 +30,14 @@ public class Triangle {
         this.isMasked = false;
     }
 
+    public Triangle(Triangle t) {
+        this.id = t.id;
+        this.x = t.x;
+        this.y = t.y;
+        this.color = t.color;
+        this.isMasked = t.isMasked;
+    }
+
     /**
      * @return true if the triangle is masked, false otherwise
      */

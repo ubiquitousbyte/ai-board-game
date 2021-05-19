@@ -51,5 +51,13 @@ public interface Game<S, A> {
      * @param state the terminal state
      * @return an array of numeric values representing the utility of the state from the player's viewpoint
      */
-    int[] utility(S state);
+    int utility(S state);
+
+    /**
+     * Get the next player in the game sequence
+     * @param state the current game state
+     * @return the player identifier
+     */
+    int getNextPlayer(S state);
+
 }

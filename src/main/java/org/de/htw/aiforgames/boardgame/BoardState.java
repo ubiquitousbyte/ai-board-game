@@ -4,29 +4,29 @@ import lenz.htw.blocks.Move;
 
 import java.util.List;
 
-public class BoardState implements Cloneable {
+public class BoardState {
 
     // The current player
     private int player;
     // A 3x2 array holding the indices of the player's tokens
-    private int[][] positions;
+    private final int[][] positions;
     // A 3x3 array holding the point vectors from the perspective of each player
-    private int[][] points;
+    private final int[] points;
     // The game board
-    private Board board;
+    private final Board board;
 
     public BoardState(int player, int[][] positions) {
         this.board = new Board();
         this.player = player;
         this.positions = positions;
-        this.points = new int[3][3];
+        this.points = new int[3];
     }
 
-    public BoardState(int player, int[][] positions, int[][] points) {
-        this.board = new Board();
-        this.player = player;
-        this.positions = positions;
-        this.points = points;
+    public BoardState(BoardState state) {
+        this.player = state.player;
+        this.positions = state.getPlayerPositions();
+        this.points = state.getPoints();
+        this.board = new Board(state.board);
     }
 
     /**
@@ -53,19 +53,13 @@ public class BoardState implements Cloneable {
     /**
      * @return a copy of the points
      */
-    public int[][] getPoints() {
-        int[][] p = points.clone();
-        for(int i = 0; i < points.length; i++) {
-            p[i] = points[i].clone();
-        }
-        return p;
-    }
+    public int[] getPoints() { return points.clone(); }
 
     /**
      * @param player the player
      * @return the player's point vector
      */
-    public int[] getPlayerPoints(int player) { return points[player]; }
+    public int getPlayerPoints(int player) { return points[player]; }
 
     /**
      * @return the current player
@@ -111,38 +105,27 @@ public class BoardState implements Cloneable {
 
     /**
      * Moves the player's tokens to the indices defined by the move and masks a field in the grid
-     * @param player the player whose making the move
      * @param m the move
      */
-    public void movePlayer(int player, Move m) {
+    public void movePlayer(Move m) {
         int oldLeftPosition = positions[player][0];
+        int oldRightPosition = positions[player][1];
         if (oldLeftPosition != m.first) {
-            board.unmask(oldLeftPosition);
             positions[player][0] = m.first;
             board.mask(m.first);
-            points[player][player]++;
+            board.unmask(oldLeftPosition);
+            if (oldLeftPosition != m.second) {
+                points[player]++;
+            }
         }
-        int oldRightPosition = positions[player][1];
         if (oldRightPosition != m.second) {
-            board.unmask(oldRightPosition);
+            if (oldRightPosition != m.first) {
+                board.unmask(oldRightPosition);
+                points[player]++;
+            }
             positions[player][1] = m.second;
             board.mask(m.second);
-            points[player][player]++;
         }
         board.mask(m.delete);
-    }
-
-    @Override
-    public BoardState clone()  {
-        try{
-            BoardState newState = (BoardState) super.clone();
-            newState.positions = getPlayerPositions();
-            newState.points = getPoints();
-            newState.board = board.clone();
-            return newState;
-        }
-        catch (CloneNotSupportedException e) {
-            return null;
-        }
     }
 }

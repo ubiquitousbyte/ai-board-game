@@ -12,12 +12,21 @@ public class MinimaxPolicyTest {
     @Test
     public void test() {
         BoardGame game = new BoardGame();
-        MinimaxPolicy policy = new MinimaxPolicy();
+        GamePolicy<BoardState, Move> policy = new AlphaBetaPolicy();
         BoardState currentState = game.startState();
-        GamePolicy.Decision<Move> move = policy.apply(game, currentState);
-        currentState = game.transition(currentState, move.action);
-        move = policy.apply(game, currentState);
-        currentState = game.transition(currentState, move.action);
-
+        while (true) {
+            if (game.isTerminal(currentState)) {
+                int nextPlayer = game.getNextPlayer(currentState);
+                currentState.setPlayer(nextPlayer);
+                continue;
+            }
+            System.out.println(currentState.getUnmaskedPositions());
+            GamePolicy.Decision<Move> move = policy.apply(game, currentState, 4);
+            if (move.action == null) {
+                break;
+            }
+            System.out.println(move);
+            currentState = game.transition(currentState, move.action);
+        }
     }
 }

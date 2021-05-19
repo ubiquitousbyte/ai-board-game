@@ -7,6 +7,8 @@ import java.util.List;
 
 public class BoardGame implements Game<BoardState, Move> {
 
+    private final boolean[] losers = new boolean[]{false, false, false};
+
     @Override
     public BoardState startState() {
         // The initial player is the red player
@@ -32,26 +34,30 @@ public class BoardGame implements Game<BoardState, Move> {
         List<Move> actions = new ArrayList<>();
 
         Triangle[] leftN = state.getLeftTokenNeighbours(player);
+        int rightTokenIndex = state.getRightTokenIndex(player);
         for (Triangle left : leftN) {
             if (left == null || left.masked()) {
                 continue;
             }
-            int rightTokenIndex = state.getRightTokenIndex(player);
             for(Integer deletePosition : unmaskedPositions) {
-                Move m = new Move(player, deletePosition, left.getId(), rightTokenIndex);
-                actions.add(m);
+                if (deletePosition != left.getId() && deletePosition != rightTokenIndex) {
+                    Move m = new Move(player, deletePosition, left.getId(), rightTokenIndex);
+                    actions.add(m);
+                }
             }
         }
 
         Triangle[] rightN = state.getRightTokenNeighbours(player);
+        int leftTokenIndex = state.getLeftTokenIndex(player);
         for (Triangle right : rightN) {
             if (right == null || right.masked()) {
                 continue;
             }
-            int leftTokenIndex = state.getLeftTokenIndex(player);
             for (Integer deletePosition : unmaskedPositions) {
-                Move m = new Move(player, deletePosition, leftTokenIndex, right.getId());
-                actions.add(m);
+                if (deletePosition != right.getId() && deletePosition != leftTokenIndex) {
+                    Move m = new Move(player, deletePosition, leftTokenIndex, right.getId());
+                    actions.add(m);
+                }
             }
         }
         return actions;
@@ -79,27 +85,32 @@ public class BoardGame implements Game<BoardState, Move> {
 
     @Override
     public BoardState transition(BoardState state, Move action) {
-        int player = getPlayer(state);
-        state.movePlayer(player, action);
-        int nextPlayer = getNextPlayer(state);
-        BoardState newState = state.clone();
-        newState.setPlayer(nextPlayer);
+        Move m = new Move(action.player, action.delete, action.first, action.second);
+        if (m.first == 255) {
+            m.first = state.getLeftTokenIndex(action.player);
+        }
+        if (m.second == 255) {
+            m.second = state.getRightTokenIndex(action.player);
+        }
+        if (m.first > m.second) {
+            int tmp = m.first;
+            m.first = m.second;
+            m.second = tmp;
+        }
+        BoardState newState = new BoardState(state);
+        newState.setPlayer(action.player);
+        newState.movePlayer(m);
         return newState;
     }
 
     @Override
-    public int[] utility(BoardState state) {
-        int[] result = new int[3];
-        for(int i = 0; i < result.length; i++) {
-            result[i] = state.getPlayerPoints(i)[i];
-        }
-        return result;
-    }
+    public int utility(BoardState state) { return state.getPlayerPoints(getPlayer(state)); }
 
-    private int getNextPlayer(BoardState state) {
+    @Override
+    public int getNextPlayer(BoardState state) {
         int player = getPlayer(state);
         if (player == 0) return 1;
-        if (player == 1) return 2;
-        return 0;
+        else if (player == 1) return 2;
+        else return 0;
     }
 }

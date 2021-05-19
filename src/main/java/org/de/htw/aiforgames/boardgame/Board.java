@@ -36,6 +36,15 @@ public class Board  implements Cloneable {
         board[34] = null;
     }
 
+    public Board(Board b) {
+        board = new Triangle[SIZE+1];
+        for(int i = 0; i < board.length; i++) {
+            if (b.board[i] != null) {
+                board[i] = new Triangle(b.board[i]);
+            }
+        }
+    }
+
     /**
      * @param index the index
      * @return the triangle at the given index.
