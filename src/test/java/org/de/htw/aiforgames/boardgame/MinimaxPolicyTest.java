@@ -3,10 +3,6 @@ package org.de.htw.aiforgames.boardgame;
 import lenz.htw.blocks.Move;
 import org.junit.Test;
 
-import java.util.Arrays;
-
-import static org.junit.Assert.*;
-
 public class MinimaxPolicyTest {
 
     @Test
@@ -21,7 +17,7 @@ public class MinimaxPolicyTest {
                 continue;
             }
             System.out.println(currentState.getUnmaskedPositions());
-            GamePolicy.Decision<Move> move = policy.apply(game, currentState, 4);
+            GamePolicy.Decision<Move> move = policy.apply(game, currentState, 3);
             if (move.action == null) {
                 break;
             }

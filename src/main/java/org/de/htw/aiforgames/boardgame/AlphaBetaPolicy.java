@@ -23,7 +23,7 @@ public class AlphaBetaPolicy implements GamePolicy<BoardState, Move> {
         if (currentPlayer == maximizingPlayer) {
             Decision<Move> max = new Decision<>(Integer.MIN_VALUE, null);
             for (Move action : actions) {
-                Decision<Move> eval = alphaBeta(game, game.transition(state, action), depth - 1, currentPlayer, alpha, beta);
+                Decision<Move> eval = alphaBeta(game, game.transition(state, action), depth - 1, game.getNextPlayer(state), alpha, beta);
                 if (eval.compareTo(max) > 0) {
                     max.utility = eval.utility;
                     max.action = action;
@@ -40,7 +40,7 @@ public class AlphaBetaPolicy implements GamePolicy<BoardState, Move> {
         else {
             Decision<Move> min = new Decision<>(Integer.MAX_VALUE, null);
             for (Move action : actions) {
-                Decision<Move> eval = alphaBeta(game, game.transition(state, action), depth - 1, maximizingPlayer, alpha, beta);
+                Decision<Move> eval = alphaBeta(game, game.transition(state, action), depth - 1, game.getNextPlayer(state), alpha, beta);
                 if (eval.compareTo(min) < 0) {
                     min.utility = eval.utility;
                     min.action = action;
