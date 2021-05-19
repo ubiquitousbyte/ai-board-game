@@ -4,11 +4,9 @@ import lenz.htw.blocks.Move;
 import lenz.htw.blocks.net.NetworkClient;
 
 import java.awt.image.BufferedImage;
-
+import java.util.Arrays;
 import java.util.logging.Logger;
 import java.util.logging.Level;
-
-import static java.lang.Thread.sleep;
 
 /**
  * This is just a simple convenience wrapper around the network client.
@@ -32,12 +30,13 @@ public class ThreadedNetworkClient implements Runnable {
 
     public void connect() { client = new NetworkClient(this.serverAddress, this.teamName, this.icon); }
 
+
     @Override
     public void run() {
         Game<BoardState, Move> game = new BoardGame();
-        GamePolicy<BoardState, Move> gamePolicy = new MinimaxPolicy();
+        GamePolicy<BoardState, Move> gamePolicy = new AlphaBetaPolicy();
         try {
-            this.connect();
+            connect();
         }
         catch (Exception e) {
             logger.log(Level.WARNING, e.getMessage());
@@ -45,25 +44,19 @@ public class ThreadedNetworkClient implements Runnable {
         }
         BoardState currentState = game.startState();
         Move recv;
-        while (! game.isTerminal(currentState)) {
+        while (true) {
             while ((recv = client.receiveMove()) != null) {
+                logger.log(Level.INFO, client.getMyPlayerNumber() + " received " + recv);
                 currentState = game.transition(currentState, recv);
             }
+            currentState.setPlayer(client.getMyPlayerNumber());
             GamePolicy.Decision<Move> decision = gamePolicy.apply(game, currentState, 3);
-            Move move = decision.action;
-            if (move == null) {
-                int statePlayer = currentState.getPlayer();
-                int threadPlayer = client.getMyPlayerNumber();
-                if (threadPlayer == statePlayer) {
-                    break;
-                }
-                else {
-                    int nextPlayer = game.getNextPlayer(currentState);
-                    currentState.setPlayer(nextPlayer);
-                }
+            if (decision.action == null) {
+                client.sendMove(new Move(currentState.getPlayer(), -1, -1, -1));
+                break;
             }
             else {
-                client.sendMove(move);
+                client.sendMove(decision.action);
             }
         }
         Move testament = new Move(currentState.getPlayer(), -1, -1, -1);

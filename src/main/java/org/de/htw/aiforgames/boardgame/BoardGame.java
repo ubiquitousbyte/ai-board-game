@@ -85,10 +85,10 @@ public class BoardGame implements Game<BoardState, Move> {
     public BoardState transition(BoardState state, Move action) {
         Move m = new Move(action.player, action.delete, action.first, action.second);
         if (m.first == 255) {
-            m.first = state.getLeftTokenIndex(getPlayer(state));
+            m.first = state.getLeftTokenIndex(action.player);
         }
         if (m.second == 255) {
-            m.second = state.getRightTokenIndex(getPlayer(state));
+            m.second = state.getRightTokenIndex(action.player);
         }
         if (m.first > m.second) {
             int tmp = m.first;
@@ -96,25 +96,19 @@ public class BoardGame implements Game<BoardState, Move> {
             m.second = tmp;
         }
         BoardState newState = new BoardState(state);
-        int player = getPlayer(newState);
-        newState.movePlayer(player, m);
-        newState.setPlayer(getNextPlayer(newState));
+        newState.setPlayer(action.player);
+        newState.movePlayer(m);
         return newState;
     }
 
     @Override
-    public int[] utility(BoardState state) {
-        int[] result = new int[3];
-        for(int i = 0; i < result.length; i++) {
-            result[i] = state.getPlayerPoints(i)[i];
-        }
-        return result;
-    }
+    public int utility(BoardState state) { return state.getPlayerPoints(getPlayer(state)); }
 
+    @Override
     public int getNextPlayer(BoardState state) {
         int player = getPlayer(state);
         if (player == 0) return 1;
-        if (player == 1) return 2;
-        return 0;
+        else if (player == 1) return 2;
+        else return 0;
     }
 }

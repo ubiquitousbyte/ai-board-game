@@ -11,7 +11,7 @@ public class BoardState {
     // A 3x2 array holding the indices of the player's tokens
     private final int[][] positions;
     // A 3x3 array holding the point vectors from the perspective of each player
-    private final int[][] points;
+    private final int[] points;
     // The game board
     private final Board board;
 
@@ -19,14 +19,14 @@ public class BoardState {
         this.board = new Board();
         this.player = player;
         this.positions = positions;
-        this.points = new int[3][3];
+        this.points = new int[3];
     }
 
     public BoardState(BoardState state) {
-        this.board = new Board(state.board);
         this.player = state.player;
-        this.points = state.getPoints();
         this.positions = state.getPlayerPositions();
+        this.points = state.getPoints();
+        this.board = new Board(state.board);
     }
 
     /**
@@ -53,19 +53,13 @@ public class BoardState {
     /**
      * @return a copy of the points
      */
-    public int[][] getPoints() {
-        int[][] p = points.clone();
-        for(int i = 0; i < points.length; i++) {
-            p[i] = points[i].clone();
-        }
-        return p;
-    }
+    public int[] getPoints() { return points.clone(); }
 
     /**
      * @param player the player
      * @return the player's point vector
      */
-    public int[] getPlayerPoints(int player) { return points[player]; }
+    public int getPlayerPoints(int player) { return points[player]; }
 
     /**
      * @return the current player
@@ -111,27 +105,27 @@ public class BoardState {
 
     /**
      * Moves the player's tokens to the indices defined by the move and masks a field in the grid
-     * @param player the player whose making the move
      * @param m the move
      */
-    public void movePlayer(int player, Move m) {
+    public void movePlayer(Move m) {
         int oldLeftPosition = positions[player][0];
+        int oldRightPosition = positions[player][1];
         if (oldLeftPosition != m.first) {
             positions[player][0] = m.first;
             board.mask(m.first);
             board.unmask(oldLeftPosition);
-            points[player][player]++;
+            if (oldLeftPosition != m.second) {
+                points[player]++;
+            }
         }
-        int oldRightPosition = positions[player][1];
         if (oldRightPosition != m.second) {
             if (oldRightPosition != m.first) {
                 board.unmask(oldRightPosition);
+                points[player]++;
             }
             positions[player][1] = m.second;
             board.mask(m.second);
-            points[player][player]++;
         }
         board.mask(m.delete);
     }
-
 }
