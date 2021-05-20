@@ -1,4 +1,4 @@
-package org.de.htw.aiforgames.boardgame;
+package org.de.htw.aiforgames.boardgame.game;
 
 import lenz.htw.blocks.Move;
 
@@ -66,6 +66,10 @@ public class BoardState {
      */
     public int getPlayer() { return player; }
 
+    /**
+     * Set the current player
+     * @param player the current player to set
+     */
     public void setPlayer(int player) { this.player = player; }
 
     /**

@@ -1,16 +1,35 @@
-package org.de.htw.aiforgames.boardgame;
+package org.de.htw.aiforgames.boardgame.policies;
 
 import lenz.htw.blocks.Move;
+import org.de.htw.aiforgames.boardgame.game.BoardState;
+import org.de.htw.aiforgames.boardgame.game.Game;
 
 import java.util.List;
 
 public class AlphaBetaPolicy implements GamePolicy<BoardState, Move> {
 
+    /**
+     * Apply the game policy to the game at the given game state up to a certain depth
+     * @param game the game
+     * @param state the state to start from
+     * @param depth the search depth
+     * @return the decision that the game policy thinks is best
+     */
     @Override
     public Decision<Move> apply(Game<BoardState, Move> game, BoardState state, int depth) {
         return alphaBeta(game, state, depth, game.getPlayer(state), Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
+    /**
+     * Minimax game policy with alpha beta pruning
+     * @param game the game
+     * @param state the initial state
+     * @param depth the search depth
+     * @param maximizingPlayer the current player that attempts to maximize her utility
+     * @param alpha the best choice (highest value) along the path for the maximizing player
+     * @param beta the best choice (lowest value) along the path for the minimizing player
+     * @return the decision
+     */
     private Decision<Move> alphaBeta(Game<BoardState, Move> game,
                                      BoardState state,
                                      int depth,

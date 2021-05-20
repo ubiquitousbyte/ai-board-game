@@ -1,4 +1,4 @@
-package org.de.htw.aiforgames.boardgame;
+package org.de.htw.aiforgames.boardgame.game;
 
 import java.util.List;
 
@@ -47,14 +47,16 @@ public interface Game<S, A> {
     S transition(S state, A action);
 
     /**
-     * Compute the utility of the state from each player's viewpoint
+     * Compute the utility of the state from the current player's viewpoint
      * @param state the terminal state
-     * @return an array of numeric values representing the utility of the state from the player's viewpoint
+     * @return a numeric value representing the utility of the current player
      */
     int utility(S state);
 
     /**
      * Get the next player in the game sequence
+     * This function does not consider players that have lost the game
+     *
      * @param state the current game state
      * @return the player identifier
      */

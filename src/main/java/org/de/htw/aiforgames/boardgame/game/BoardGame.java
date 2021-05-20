@@ -1,4 +1,4 @@
-package org.de.htw.aiforgames.boardgame;
+package org.de.htw.aiforgames.boardgame.game;
 
 import lenz.htw.blocks.Move;
 
@@ -7,6 +7,11 @@ import java.util.List;
 
 public class BoardGame implements Game<BoardState, Move> {
 
+    /**
+     * NOTE: This is effectively the root node of our game tree
+     * The initial state that defines how the game is set up at the start
+     * @return the initial state
+     */
     @Override
     public BoardState startState() {
         // The initial player is the red player
@@ -22,9 +27,19 @@ public class BoardGame implements Game<BoardState, Move> {
         return state;
     }
 
+    /**
+     * Defines which player has the move in the state
+     * @param state the state
+     * @return 0 for red, 1 for green, 2 for blue
+     */
     @Override
     public int getPlayer(BoardState state) { return state.getPlayer(); }
 
+    /**
+     * NOTE: These are the edges in our game tree
+     * @param state the state
+     * @return the set of legal moves for a state
+     */
     @Override
     public List<Move> getActions(BoardState state) {
         int player = getPlayer(state);
@@ -61,6 +76,11 @@ public class BoardGame implements Game<BoardState, Move> {
         return actions;
     }
 
+    /**
+     * A terminal test which is true when the game is over and false otherwise
+     * @param state the state to check
+     * @return true if the state is a terminal state, false otherwise
+     */
     @Override
     public boolean isTerminal(BoardState state) {
         int player = getPlayer(state);
@@ -81,6 +101,12 @@ public class BoardGame implements Game<BoardState, Move> {
         return true;
     }
 
+    /**
+     * Transition from one state to another via a given action and return the resulting state
+     * @param state the state to transition from
+     * @param action the action to transition via
+     * @return the state transitioned to
+     */
     @Override
     public BoardState transition(BoardState state, Move action) {
         Move m = new Move(action.player, action.delete, action.first, action.second);
@@ -101,9 +127,21 @@ public class BoardGame implements Game<BoardState, Move> {
         return newState;
     }
 
+    /**
+     * Compute the utility of the state from the current player's viewpoint
+     * @param state the terminal state
+     * @return a numeric value representing the utility of the current player
+     */
     @Override
     public int utility(BoardState state) { return state.getPlayerPoints(getPlayer(state)); }
 
+    /**
+     * Get the next player in the game sequence
+     * This function does not consider players that have lost the game
+     *
+     * @param state the current game state
+     * @return the player identifier
+     */
     @Override
     public int getNextPlayer(BoardState state) {
         int player = getPlayer(state);

@@ -1,4 +1,4 @@
-package org.de.htw.aiforgames.boardgame;
+package org.de.htw.aiforgames.boardgame.game;
 
 import java.util.Objects;
 

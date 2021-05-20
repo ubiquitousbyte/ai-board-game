@@ -1,16 +1,33 @@
-package org.de.htw.aiforgames.boardgame;
+package org.de.htw.aiforgames.boardgame.policies;
 
 import lenz.htw.blocks.Move;
+import org.de.htw.aiforgames.boardgame.game.BoardState;
+import org.de.htw.aiforgames.boardgame.game.Game;
 
 import java.util.List;
 
 public class MinimaxPolicy implements GamePolicy<BoardState, Move> {
 
+    /**
+     * Apply the game policy to the game at the given game state up to a certain depth
+     * @param game the game
+     * @param state the state to start from
+     * @param depth the search depth
+     * @return the decision that the game policy thinks is best
+     */
     @Override
     public Decision<Move> apply(Game<BoardState, Move> game, BoardState state, int depth) {
         return minimax(game, state, depth, game.getPlayer(state));
     }
 
+    /**
+     * The minimax game policy
+     * @param game the game to apply the policy to
+     * @param state the current game state
+     * @param depth the search depth
+     * @param maximizingPlayer the player that tries to maximize her utility
+     * @return the decision
+     */
     private Decision<Move> minimax(Game<BoardState, Move> game, BoardState state, int depth, int maximizingPlayer) {
         if (game.isTerminal(state) || depth == 0) return new Decision<>(game.utility(state), null);
         List<Move> actions = game.getActions(state);

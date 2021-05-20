@@ -1,5 +1,13 @@
 package org.de.htw.aiforgames.boardgame;
 
+import lenz.htw.blocks.Move;
+import org.de.htw.aiforgames.boardgame.game.BoardGame;
+import org.de.htw.aiforgames.boardgame.game.BoardState;
+import org.de.htw.aiforgames.boardgame.game.Game;
+import org.de.htw.aiforgames.boardgame.player.BoardGamePlayer;
+import org.de.htw.aiforgames.boardgame.player.*;
+import org.de.htw.aiforgames.boardgame.policies.AlphaBetaPolicy;
+import org.de.htw.aiforgames.boardgame.policies.GamePolicy;
 import org.de.htw.aiforgames.boardgame.utils.ImageReader;
 
 import java.awt.image.BufferedImage;
@@ -22,7 +30,12 @@ public class App {
         }
         List<Thread> threads = new ArrayList<>();
         for (String teamName: teamNames) {
-            ThreadedNetworkClient client = new ThreadedNetworkClient(serverAddress, teamName, icon);
+            Game<BoardState, Move> game = new BoardGame();
+            GamePolicy<BoardState, Move> policy = new AlphaBetaPolicy();
+            Player<BoardState, Move> client = new BoardGamePlayer(serverAddress, teamName, icon);
+            client.setGame(game);
+            client.setGamePolicy(policy);
+
             Thread t = new Thread(client);
             t.start();
             threads.add(t);

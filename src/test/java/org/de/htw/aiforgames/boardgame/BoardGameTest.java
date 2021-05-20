@@ -1,9 +1,11 @@
 package org.de.htw.aiforgames.boardgame;
 
 import lenz.htw.blocks.Move;
+import org.de.htw.aiforgames.boardgame.game.BoardGame;
+import org.de.htw.aiforgames.boardgame.game.BoardState;
+import org.de.htw.aiforgames.boardgame.policies.MinimaxPolicy;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.junit.Assert.*;

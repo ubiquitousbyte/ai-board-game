@@ -1,5 +1,7 @@
 package org.de.htw.aiforgames.boardgame;
 
+import org.de.htw.aiforgames.boardgame.game.Board;
+import org.de.htw.aiforgames.boardgame.game.Triangle;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
