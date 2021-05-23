@@ -34,8 +34,8 @@ public class AlphaBetaPolicy implements GamePolicy<BoardState, Move> {
                                      BoardState state,
                                      int depth,
                                      int maximizingPlayer,
-                                     int alpha,
-                                     int beta) {
+                                     double alpha,
+                                     double beta) {
         if (game.isTerminal(state) || depth == 0) return new Decision<>(game.utility(state), null);
         List<Move> actions = game.getActions(state);
         int currentPlayer = game.getPlayer(state);

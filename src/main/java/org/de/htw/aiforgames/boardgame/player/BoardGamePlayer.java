@@ -35,7 +35,7 @@ public class BoardGamePlayer extends NetPlayer<BoardState, Move> {
                 currentState = game.transition(currentState, recv);
             }
             currentState.setPlayer(client.getMyPlayerNumber());
-            GamePolicy.Decision<Move> decision = policy.apply(game, currentState, 4);
+            GamePolicy.Decision<Move> decision = policy.apply(game, currentState, 3);
             if (decision.getAction() == null) {
                 client.sendMove(new Move(currentState.getPlayer(), -1, -1, -1));
                 break;
@@ -44,5 +44,15 @@ public class BoardGamePlayer extends NetPlayer<BoardState, Move> {
                 client.sendMove(decision.getAction());
             }
         }
+    }
+
+    @Override
+    public String getTeam() {
+        return teamName;
+    }
+
+    @Override
+    public BufferedImage getIcon() {
+        return icon;
     }
 }

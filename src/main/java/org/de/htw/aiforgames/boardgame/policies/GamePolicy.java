@@ -9,17 +9,17 @@ public interface GamePolicy<S, A> {
      * @param <A> the action type
      */
     class Decision<A> implements Comparable<Decision<A>> {
-        int utility;
+        double utility;
         A action;
 
-        public Decision(int utility, A action) {
+        public Decision(double utility, A action) {
             this.utility = utility;
             this.action = action;
         }
 
         public A getAction() { return action; }
 
-        public int getUtility() { return utility; }
+        public double getUtility() { return utility; }
 
         @Override
         public String toString() {
@@ -30,7 +30,7 @@ public interface GamePolicy<S, A> {
         }
 
         @Override
-        public int compareTo(Decision<A> o) { return Integer.compare(this.utility, o.utility); }
+        public int compareTo(Decision<A> o) { return Double.compare(this.utility, o.utility); }
     }
 
     /**

@@ -50,6 +50,10 @@ public class BoardState {
         return pos;
     }
 
+    public int[] getPlayerPositions(int player) {
+        return positions[player].clone();
+    }
+
     /**
      * @return a copy of the points
      */

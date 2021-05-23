@@ -1,11 +1,16 @@
 package org.de.htw.aiforgames.boardgame.game;
 
 import lenz.htw.blocks.Move;
+import org.de.htw.aiforgames.boardgame.evolution.Evaluator;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class BoardGame implements Game<BoardState, Move> {
+
+    private final Evaluator<BoardState> model;
+
+    public BoardGame(Evaluator<BoardState> model) { this.model = model; }
 
     /**
      * NOTE: This is effectively the root node of our game tree
@@ -133,7 +138,7 @@ public class BoardGame implements Game<BoardState, Move> {
      * @return a numeric value representing the utility of the current player
      */
     @Override
-    public int utility(BoardState state) { return state.getPlayerPoints(getPlayer(state)); }
+    public double utility(BoardState state) { return model.eval(model.features(state)); }
 
     /**
      * Get the next player in the game sequence
@@ -149,4 +154,22 @@ public class BoardGame implements Game<BoardState, Move> {
         else if (player == 1) return 2;
         else return 0;
     }
+
+    /**
+     * Returns a vector that represents a player's understanding/perception of the game.
+     * In particular, this function may return the coefficients of the features used by the evaluator.
+     * Since the coefficients correspond to the priorities that the player assigns to each feature, they can be
+     * thought of as the player's perception of the game.
+     * @return the player's understanding of the game
+     */
+    @Override
+    public double[] getPlayerPerception() { return model.getCoefficients(); }
+
+    /**
+     * Updates the player's perception of the game by assigning different priorities to each of the features that
+     * the player used in order to determine her next move.
+     * @param coefficients the new priorities
+     */
+    @Override
+    public void setPlayerPerception(double[] coefficients) { model.setCoefficients(coefficients); }
 }

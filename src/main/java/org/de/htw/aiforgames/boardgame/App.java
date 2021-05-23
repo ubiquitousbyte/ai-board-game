@@ -1,13 +1,6 @@
 package org.de.htw.aiforgames.boardgame;
 
-import lenz.htw.blocks.Move;
-import org.de.htw.aiforgames.boardgame.game.BoardGame;
-import org.de.htw.aiforgames.boardgame.game.BoardState;
-import org.de.htw.aiforgames.boardgame.game.Game;
-import org.de.htw.aiforgames.boardgame.player.BoardGamePlayer;
-import org.de.htw.aiforgames.boardgame.player.*;
-import org.de.htw.aiforgames.boardgame.policies.AlphaBetaPolicy;
-import org.de.htw.aiforgames.boardgame.policies.GamePolicy;
+import org.de.htw.aiforgames.boardgame.evolution.DefaultStrategy;
 import org.de.htw.aiforgames.boardgame.utils.ImageReader;
 
 import java.awt.image.BufferedImage;
@@ -28,22 +21,14 @@ public class App {
             System.err.println(e.getMessage());
             return;
         }
-        List<Thread> threads = new ArrayList<>();
-        for (String teamName: teamNames) {
-            Game<BoardState, Move> game = new BoardGame();
-            GamePolicy<BoardState, Move> policy = new AlphaBetaPolicy();
-            Player<BoardState, Move> client = new BoardGamePlayer(serverAddress, teamName, icon);
-            client.setGame(game);
-            client.setGamePolicy(policy);
 
-            Thread t = new Thread(client);
-            t.start();
-            threads.add(t);
-        }
+        List<double[]> firstGeneration = new ArrayList<>(3);
+        firstGeneration.add(DefaultStrategy.randomCoefficients(15));
+        firstGeneration.add(DefaultStrategy.randomCoefficients(15));
+        firstGeneration.add(DefaultStrategy.randomCoefficients(15));
 
-        for (Thread t : threads) {
-            t.join();
-        }
-
+        DefaultStrategy world = new DefaultStrategy(serverAddress, icon, firstGeneration);
+        Thread t = new Thread(world);
+        t.start();
     }
 }

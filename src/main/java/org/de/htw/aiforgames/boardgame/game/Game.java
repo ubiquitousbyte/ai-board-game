@@ -4,6 +4,7 @@ import java.util.List;
 
 /**
  * A game identified by a state type S and an action type A
+ * Note that the game is not only identified by the rules that it follows, but also by the agent's understanding of the game.
  *
  * @param <S> the state type
  * @param <A> the action type
@@ -51,7 +52,7 @@ public interface Game<S, A> {
      * @param state the terminal state
      * @return a numeric value representing the utility of the current player
      */
-    int utility(S state);
+    double utility(S state);
 
     /**
      * Get the next player in the game sequence
@@ -62,4 +63,19 @@ public interface Game<S, A> {
      */
     int getNextPlayer(S state);
 
+    /**
+     * Returns a vector that represents a player's understanding/perception of the game.
+     * In particular, this function may return the coefficients of the features used by the evaluator.
+     * Since the coefficients correspond to the priorities that the player assigns to each feature, they can be
+     * thought of as the player's perception of the game.
+     * @return the player's understanding of the game
+     */
+    double[] getPlayerPerception();
+
+    /**
+     * Updates the player's perception of the game by assigning different priorities to each of the features that
+     * the player used in order to determine her next move.
+     * @param coefficients the new priorities
+     */
+    void setPlayerPerception(double[] coefficients);
 }
